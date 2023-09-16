@@ -1,0 +1,9 @@
+#directories
+#node_modules/
+#resources/
+
+#files
+#index.js
+#package.json
+#package-lock.json
+#main.css
