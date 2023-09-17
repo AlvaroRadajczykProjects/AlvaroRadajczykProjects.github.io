@@ -49,4 +49,9 @@ body {
 	font-size: calc(10px + 1.2vh); 
 	font-family:'Tahoma'; 
 	user-select: none;
+	transition-duration: 0.4s;
+}
+
+.boton:hover {
+	background-color: grey; 
 }

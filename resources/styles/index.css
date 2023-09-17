@@ -25,19 +25,44 @@ body {
 .box .row {
 	
 }
+
 .box .row.content {
 	flex: 1 1 auto;
 	height: 100%;
 	overflow: auto;
 }
+
 .box .row.footer {
 	flex: 0 1 auto;
-	background-color: blue;
+	background-color: #2D90B5;
 	text-align: center; 
-	font-family:'Courier New'; 
-	font-size: 5vmin; 
+	font-family:'Tahoma'; 
+	font-size: 20px; 
 	color:white; 
 	padding-top: 10px;
-	padding-bottom: 10px;
+	padding-bottom: 14px;
 	user-select: none;
+	transition-duration: 0.4s;
+	
+	text-transform: uppercase;
+    font-family: verdana;
+    color: #f5f5f5;
+    text-shadow: 1px 1px 1px #494646,
+        1px 2px 1px #494646,
+        2px 3px 1px #494646,
+        3px 4px 1px #494646,
+        4px 5px 1px #494646,
+        5px 4px 1px #494646,
+    9px 9px 6px rgba(16,16,16,0.8),
+    10px 14px 10px rgba(16,16,16,0.6),
+    11px 19px 35px rgba(16,16,16,0.6),
+    12px 24px 60px rgba(16,16,16,0.8);
+}
+
+.box .row.footer:hover {
+	background-color: rgb(0,186,253);
+}
+
+.text3d {
+    
 }

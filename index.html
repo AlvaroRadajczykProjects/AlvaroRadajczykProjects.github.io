@@ -9,9 +9,7 @@
 			<div class="row content">
 				<iframe class="frame" id="frame" scrolling="no" src="./resources/pages/plain_introduccion.html"></iframe>
 			</div>
-			<div id="pie" class="row footer" onclick="toggle()">
-				Página 3D
-			</div>
+			<div id="pie" class="row footer" onclick="toggle()"> VER PÁGINA 3D</div>
 		</div>
 		
 		<script>
@@ -24,11 +22,11 @@
 				if(tresde) { 
 					document.getElementById("frame").src = "./resources/pages/plain_introduccion.html" 
 					document.getElementById("frame").scrolling = "yes"
-					document.getElementById("pie").innerHTML = "Página 3D"
+					document.getElementById("pie").innerHTML = "VER PÁGINA 3D"
 				} else { 
 					document.getElementById("frame").src = "./resources/pages/threedims.html" 
 					document.getElementById("frame").scrolling = "no"
-					document.getElementById("pie").innerHTML = "Página estándar"
+					document.getElementById("pie").innerHTML = "VER PÁGINA ESTÁNDAR"
 				}
 				tresde = !tresde
 				console.log(tresde)
