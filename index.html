@@ -1,35 +1,41 @@
-<!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link type="text/css" rel="stylesheet" href="./resources/styles/index.css">
 	</head>
-	<body style="margin:0; padding:0; width: 100%; height:100%">
+	<body>
+		
+		<div class="box">
+			<div class="row content">
+				<iframe class="frame" id="frame" scrolling="no" src="./resources/pages/plain_introduccion.html"></iframe>
+			</div>
+			<div id="pie" class="row footer" onclick="toggle()">
+				Página 3D
+			</div>
+		</div>
+		
+		<script>
 	
-	<div style="position: absolute; width: 100%; height: 90%"> 
-		<iframe id="frame" scrolling="no" style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;"></iframe>
-	</div>
+			//document.getElementById("cuerpo").style.height = "500px"//window.innerHeight - document.getElementById("pie").style.height - 100;
 	
-	<div id="texto" style="position: absolute; bottom: 0px; width: 100%; height: 10%; background-color: blue; text-align: center; background-color:blue; font-family:'Courier New'; font-size: 5vmin; color:white; box-sizing: border-box; padding: 10px" onclick="toggle()">
-		Pulsa aquí para ir a la página 3D
-	</div>
-	
-	<script>
-			var tresde = true
+			var tresde = false
 
 			function toggle() {
 				if(tresde) { 
-					document.getElementById("frame").src = "plain.html" 
+					document.getElementById("frame").src = "./resources/pages/plain_introduccion.html" 
 					document.getElementById("frame").scrolling = "yes"
-					document.getElementById("texto").innerHTML = "Pulsa aquí para volver a la página 3D"
+					document.getElementById("pie").innerHTML = "Página 3D"
 				} else { 
-					document.getElementById("frame").src = "threedims.html" 
+					document.getElementById("frame").src = "./resources/pages/threedims.html" 
 					document.getElementById("frame").scrolling = "no"
-					document.getElementById("texto").innerHTML = "Pulsa aquí para volver a la página estándar"
+					document.getElementById("pie").innerHTML = "Página estándar"
 				}
 				tresde = !tresde
+				console.log(tresde)
 			}
 		
-			document.getElementById("frame").src = "threedims.html"
+			document.getElementById("frame").scrolling = "yes"
+			document.getElementById("frame").src = "./resources/pages/plain_introduccion.html"
 		</script>
 		
 	</body>

@@ -1,0 +1,52 @@
+body {
+	margin: 0;
+	padding: 0;
+	width: 100vw;
+	height: 100vh; /* or simply use height:100% with body and html */
+}
+
+#frame {
+	border: none;
+	width: 100%;
+}
+
+.box {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	display: flex;
+	flex-flow: column;
+}
+
+.box .row {
+	
+}
+
+.box .row.header {
+	text-align: center;
+	flex: 0 1 auto;
+	background-color: black;
+}
+
+.box .row.content {
+	flex: 1 1 auto;
+	height: 100%;
+	overflow: auto;
+}
+
+.boton {
+	display: inline-block; 
+	margin: 0 auto; 
+	padding-left: 4px; 
+	padding-right: 4px; 
+	padding-top: 10px; 
+	padding-bottom: 10px; 
+	background-color: black; 
+	color: white;
+	font-size: calc(10px + 1.2vh); 
+	font-family:'Tahoma'; 
+	user-select: none;
+}
