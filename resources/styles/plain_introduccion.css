@@ -1,4 +1,7 @@
-html, body {
-	height: 100%;
-	margin: 0;
+body {
+	
+}
+
+#first_image_container {
+	background-image: linear-gradient(0deg, black, 50%, transparent), url("../images/plain_introduccion.jpg");
 }
