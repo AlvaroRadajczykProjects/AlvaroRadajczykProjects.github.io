@@ -2,7 +2,9 @@ import * as THREE from 'three';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
 $(document).ready(function() {
-    
+
+	let pointerLockActivatedAt = null;
+
 	let camera, scene, renderer, controls;
 
 	const objects = [];
@@ -43,23 +45,26 @@ $(document).ready(function() {
 		const instructions = document.getElementById( 'instructions' );
 
 		instructions.addEventListener( 'click', function () {
-
-			controls.lock();
-
+			if ( pointerLockActivatedAt == null ){
+				controls.lock();
+				pointerLockActivatedAt = performance.now();
+			} else if ( (performance.now() - pointerLockActivatedAt) < 1000 ){ 
+				alert("Pulsa aquí, el motor 3D no permite volver a entrar antes de 1 segundo");
+			} else {
+				controls.lock();
+				pointerLockActivatedAt = performance.now();
+			}
 		} );
 
 		controls.addEventListener( 'lock', function () {
-
 			instructions.style.display = 'none';
 			blocker.style.display = 'none';
-
 		} );
 
 		controls.addEventListener( 'unlock', function () {
-
-			blocker.style.display = 'hidden';
+			pointerLockActivatedAt = performance.now();
+			blocker.style.display = 'block';
 			instructions.style.display = '';
-
 		} );
 
 		scene.add( controls.getObject() );
@@ -225,9 +230,9 @@ $(document).ready(function() {
 
 	function animate() {
 
-		requestAnimationFrame( animate );
-
 		const time = performance.now();
+
+		requestAnimationFrame( animate );
 
 		if ( controls.isLocked === true ) {
 
