@@ -20,12 +20,16 @@
 
 			function toggle() {
 				if(tresde) { 
-					document.getElementById("frame").src = "./resources/pages/plain_introduccion.html" 
 					document.getElementById("frame").scrolling = "yes"
+					document.getElementById("frame").src = "./resources/pages/plain_introduccion.html" 
 					document.getElementById("pie").innerHTML = "VER PÁGINA 3D"
 				} else { 
-					document.getElementById("frame").src = "./resources/pages/threedims.html" 
 					document.getElementById("frame").scrolling = "no"
+					if( 'ontouchstart' in window || navigator.maxTouchPoints ){
+						 document.getElementById("frame").src = "./resources/pages/threedims_mobile.html" 
+					} else {
+						document.getElementById("frame").src = "./resources/pages/threedims.html"
+					}
 					document.getElementById("pie").innerHTML = "VER PÁGINA ESTÁNDAR"
 				}
 				tresde = !tresde
