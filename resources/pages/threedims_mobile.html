@@ -11,13 +11,13 @@
 				position: absolute;
 				width: 100%;
 				height: 100%;
-				background-color: rgba(0,0,0,0.01);
+				background-color: rgba(0,0,0,0.7);
 			}
 
 			#instructions {
 				width: 100%;
 				height: 100%;
-
+				
 				display: flex;
 				flex-direction: column;
 				justify-content: center;
@@ -26,28 +26,21 @@
 				text-align: center;
 				font-size: 14px;
 				cursor: pointer;
+				
+				user-select: none;
 			}
 		</style>
 		
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 	</head>
 	<body>
+	
 		<div id="container"></div>
-		<div id="blocker"></div>
 		
-		<div id="blocker">
-			<div id="instructions">
-				<p style="font-size:36px">
-					Click to play
-				</p>
-				<p>
-					Move: WASD<br/>
-					Jump: SPACE<br/>
-					Look: MOUSE
-				</p>
-			</div>
+		<div id="joystick" style="position: absolute; top: 100px; left: 100px; width: 140px; height: 140px; background-color: rgb(255,0,0,0.3); border-radius: 50%;">
+			<div id="joystick_control" style="position: absolute; width: 60px; height: 60px; background-color: rgb(16,16,16,0.3); border-radius: 50%;"></div>
 		</div>
-		
+				
 		<!-- Import maps polyfill -->
 		<!-- Remove this when import maps will be widely supported -->
 		<script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"></script>
@@ -60,10 +53,228 @@
 				}
 			}
 		</script>
-
-		<!-- <script type="module" src="../scripts/threedims.js"></script> -->
 		
-		<script type="module" src="../scripts/threedims_mobile.js"></script>
+		<script>
+
+			function getOffset(el) {
+				const rect = el.getBoundingClientRect();
+				return {
+					left: rect.left + window.scrollX,
+					top: rect.top + window.scrollY
+				};
+			}
+
+			function dragElementComputer(elmnt) {
+				var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+				
+				elmnt.onmousedown = dragMouseDown;
+
+				function dragMouseDown(e) {
+					e = e || window.event;
+					e.preventDefault();
+					// get the mouse cursor position at startup:
+					pos3 = e.clientX;
+					pos4 = e.clientY;
+					document.onmouseup = closeDragElement;
+					// call a function whenever the cursor moves:
+					document.onmousemove = elementDrag;
+				}
+
+				function elementDrag(e) {
+					e = e || window.event;
+					e.preventDefault();
+					// calculate the new cursor position:
+					
+					pos1 = pos3 - e.clientX;
+					pos2 = pos4 - e.clientY;
+					pos3 = e.clientX;
+					pos4 = e.clientY;
+					
+					if ( elmnt.parentElement != "" || elmnt.parentElement != null ) {
+					
+						var padre = elmnt.parentElement
+						var padre_centrox = getOffset(padre).left + padre.offsetWidth/2;
+						var padre_centroy = getOffset(padre).top + padre.offsetHeight/2;
+						var hijo_centrox = getOffset(elmnt).left + elmnt.offsetWidth/2;
+						var hijo_centroy = getOffset(elmnt).top + elmnt.offsetHeight/2;
+					
+						if( Math.sqrt( Math.pow(padre_centrox -  e.clientX, 2.0) + Math.pow(padre_centroy -  e.clientY, 2.0) ) < 50 ){
+							elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+							elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+						} else {
+							//Math.PI
+							var hipotenusa = Math.sqrt( Math.pow(padre_centrox -  e.clientX, 2.0) + Math.pow(padre_centroy -  e.clientY, 2.0) )
+							var seno = (e.clientX-padre_centrox)/hipotenusa;
+							var coseno = (e.clientY-padre_centroy)/hipotenusa;
+							elmnt.style.left = ( padre.offsetWidth/2 - elmnt.offsetWidth/2 ) + seno*50 + "px";
+							elmnt.style.top = ( padre.offsetHeight/2 - elmnt.offsetHeight/2 ) + coseno*50 + "px";
+						}
+
+					}
+				}
+
+				function closeDragElement() {
+					// stop moving when mouse button is released:
+					var padre = elmnt.parentElement
+
+					elmnt.style.top = padre.offsetHeight/2 - elmnt.offsetHeight/2 + "px";
+					elmnt.style.left = padre.offsetWidth/2 - elmnt.offsetWidth/2 + "px";
+					
+					document.onmouseup = null;
+					document.onmousemove = null;
+				}
+			  
+			}
+			
+			function dragElementMobile(elmnt) {
+			
+				var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+				elmnt.addEventListener("touchstart", handleStart);
+				elmnt.addEventListener("touchend", handleEnd);
+				elmnt.addEventListener("touchcancel", handleCancel);
+				elmnt.addEventListener("touchmove", handleMove);
+				
+				function handleStart(evt) {
+					evt.preventDefault();
+					var touches = evt.changedTouches;
+					var touch = touches[0];
+					pos3 = touch.pageX;
+					pos4 = touch.pageY;
+				}
+
+				function handleMove(evt) {
+					evt.preventDefault();
+					var touches = evt.changedTouches;
+					var touch = touches[0];
+					
+					pos1 = pos3 - touch.pageX;
+					pos2 = pos4 - touch.pageY;
+					pos3 = touch.pageX;
+					pos4 = touch.pageY;
+					
+					if ( elmnt.parentElement != "" || elmnt.parentElement != null ) {
+					
+						var padre = elmnt.parentElement
+						var padre_centrox = getOffset(padre).left + padre.offsetWidth/2;
+						var padre_centroy = getOffset(padre).top + padre.offsetHeight/2;
+						var hijo_centrox = getOffset(elmnt).left + elmnt.offsetWidth/2;
+						var hijo_centroy = getOffset(elmnt).top + elmnt.offsetHeight/2;
+					
+						if( Math.sqrt( Math.pow(padre_centrox -  touch.pageX, 2.0) + Math.pow(padre_centroy -  touch.pageY, 2.0) ) < 50 ){
+							elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+							elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+						} else {
+							//Math.PI
+							var hipotenusa = Math.sqrt( Math.pow(padre_centrox -  touch.pageX, 2.0) + Math.pow(padre_centroy -  touch.pageY, 2.0) )
+							var seno = (touch.pageX-padre_centrox)/hipotenusa;
+							var coseno = (touch.pageY-padre_centroy)/hipotenusa;
+							elmnt.style.left = ( padre.offsetWidth/2 - elmnt.offsetWidth/2 ) + seno*50 + "px";
+							elmnt.style.top = ( padre.offsetHeight/2 - elmnt.offsetHeight/2 ) + coseno*50 + "px";
+						}
+
+					}
+				}
+
+				function handleEnd(evt) {
+					evt.preventDefault();
+					var padre = elmnt.parentElement
+					elmnt.style.top = padre.offsetHeight/2 - elmnt.offsetHeight/2 + "px";
+					elmnt.style.left = padre.offsetWidth/2 - elmnt.offsetWidth/2 + "px";
+				}
+
+				function handleCancel(evt) {
+					evt.preventDefault();
+				}
+
+
+				//elmnt.onmousedown = dragMouseDown;
+
+				/*function dragMouseDown(e) {
+					e = e || window.event;
+					e.preventDefault();
+					// get the mouse cursor position at startup:
+					pos3 = e.clientX;
+					pos4 = e.clientY;
+					document.onmouseup = closeDragElement;
+					// call a function whenever the cursor moves:
+					document.onmousemove = elementDrag;
+				}
+
+				function elementDrag(e) {
+					e = e || window.event;
+					e.preventDefault();
+					// calculate the new cursor position:
+					
+					alert("hola???")
+					
+					var evt = (typeof e.originalEvent === 'undefined') ? e : e.originalEvent;
+					var touch = evt.touches[0] || evt.changedTouches[0];
+					
+					pos1 = pos3 - touch.pageX;
+					pos2 = pos4 - touch.pageY;
+					pos3 = touch.pageX;
+					pos4 = touch.pageY;
+					
+					alert("Entro")
+					
+					if ( elmnt.parentElement != "" || elmnt.parentElement != null ) {
+					
+						var padre = elmnt.parentElement
+						var padre_centrox = getOffset(padre).left + padre.offsetWidth/2;
+						var padre_centroy = getOffset(padre).top + padre.offsetHeight/2;
+						var hijo_centrox = getOffset(elmnt).left + elmnt.offsetWidth/2;
+						var hijo_centroy = getOffset(elmnt).top + elmnt.offsetHeight/2;
+					
+						if( Math.sqrt( Math.pow(padre_centrox -  touch.pageX, 2.0) + Math.pow(padre_centroy -  touch.pageY, 2.0) ) < 50 ){
+							elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+							elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+						} else {
+							//Math.PI
+							var hipotenusa = Math.sqrt( Math.pow(padre_centrox -  touch.pageX, 2.0) + Math.pow(padre_centroy -  touch.pageY, 2.0) )
+							var seno = (touch.pageX-padre_centrox)/hipotenusa;
+							var coseno = (touch.pageY-padre_centroy)/hipotenusa;
+							elmnt.style.left = ( padre.offsetWidth/2 - elmnt.offsetWidth/2 ) + seno*50 + "px";
+							elmnt.style.top = ( padre.offsetHeight/2 - elmnt.offsetHeight/2 ) + coseno*50 + "px";
+						}
+
+					}
+				}
+
+				function closeDragElement() {
+					// stop moving when mouse button is released:
+					var padre = elmnt.parentElement
+
+					elmnt.style.top = padre.offsetHeight/2 - elmnt.offsetHeight/2 + "px";
+					elmnt.style.left = padre.offsetWidth/2 - elmnt.offsetWidth/2 + "px";
+					
+					document.onmouseup = null;
+					document.onmousemove = null;
+				}*/
+			  
+			}
+			
+			function dragElement(elmnt) {
+				if ( elmnt.parentElement != "" || elmnt.parentElement != null ) {
+					var padre = elmnt.parentElement
+					elmnt.style.left = padre.offsetWidth/2 - elmnt.offsetWidth/2 + "px";
+					elmnt.style.top = padre.offsetHeight/2 - elmnt.offsetHeight/2 + "px";
+				}
+			
+				if ('ontouchstart' in window || navigator.maxTouchPoints) {
+					alert("eres un mobil");
+					dragElementMobile(elmnt);
+				} else {
+					alert("eres un ordenador");
+					dragElementComputer(elmnt);
+				}
+			}
+
+			dragElement(document.getElementById("joystick_control"));
+			
+		</script>
+		
+		<!-- <script type="module" src="../scripts/threedims_mobile.js"></script> -->
 
 	</body>
 </html>
