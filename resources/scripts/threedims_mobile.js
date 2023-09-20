@@ -11,6 +11,8 @@ $(document).ready(function() {
 	var seno = 0.0;
 	var coseno = 0.0;
 	
+	var moving = false;
+	
 	function getOffset(el) {
 		const rect = el.getBoundingClientRect();
 		return {
@@ -39,6 +41,8 @@ $(document).ready(function() {
 			e = e || window.event;
 			e.preventDefault();
 			// calculate the new cursor position:
+			
+			moving = true;
 			
 			pos1 = pos3 - e.clientX;
 			pos2 = pos4 - e.clientY;
@@ -73,6 +77,9 @@ $(document).ready(function() {
 		}
 
 		function closeDragElement() {
+			
+			moving = false;
+			
 			// stop moving when mouse button is released:
 			var padre = elmnt.parentElement
 
@@ -99,6 +106,8 @@ $(document).ready(function() {
 		
 		function handleStart(evt) {
 			evt.preventDefault();
+			
+			moving = true;
 			var touches = evt.changedTouches;
 			var touch = touches[0];
 			pos3 = touch.pageX;
@@ -107,6 +116,8 @@ $(document).ready(function() {
 
 		function handleMove(evt) {
 			evt.preventDefault();
+			
+			moving = true;
 			var touches = evt.changedTouches;
 			var touch = touches[0];
 			
@@ -141,6 +152,8 @@ $(document).ready(function() {
 
 		function handleEnd(evt) {
 			evt.preventDefault();
+			
+			moving = false;
 			var padre = elmnt.parentElement
 			elmnt.style.top = padre.offsetHeight/2 - elmnt.offsetHeight/2 + "px";
 			elmnt.style.left = padre.offsetWidth/2 - elmnt.offsetWidth/2 + "px";
@@ -150,6 +163,8 @@ $(document).ready(function() {
 
 		function handleCancel(evt) {
 			evt.preventDefault();
+			
+			moving = false;
 		}
 	  
 	}
@@ -185,12 +200,16 @@ $(document).ready(function() {
 	let moveLeft = false;
 	let moveRight = false;
 	let canJump = false;
+	
+	const forward = new THREE.Vector3();
 
 	let prevTime = performance.now();
 	const velocity = new THREE.Vector3();
 	const direction = new THREE.Vector3();
 	const vertex = new THREE.Vector3();
 	const color = new THREE.Color();
+	
+	let updateCameraOrbit = 0;
 
 	init();
 	animate();
@@ -209,21 +228,25 @@ $(document).ready(function() {
 		scene.add( light );
 
 		controls = new OrbitControls(camera, document.getElementById("container"));
-  
-		  const updateCameraOrbit = () => {
-			const forward = new THREE.Vector3();
+		controls.enableZoom = false;
+		controls.enablePan = false;
+		
+		controls.addEventListener('change', () => {
 			camera.getWorldDirection(forward);
-
 			controls.target.copy(camera.position).add(forward);
-		  };
-		  
-		  controls.addEventListener('end', () => {
-			updateCameraOrbit();
-		  });
-		  
-		  updateCameraOrbit();
+		});
+		
+		controls.addEventListener('start', () => {
+			camera.getWorldDirection(forward);
+			controls.target.copy(camera.position).add(forward);
+		});
+		
+		controls.addEventListener('end', () => {
+			camera.getWorldDirection(forward);
+			controls.target.copy(camera.position).add(forward);
+		});
 
-		scene.add( controls );
+		scene.add( camera );
 
 		raycaster = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, - 1, 0 ), 0, 10 );
 
@@ -355,8 +378,36 @@ $(document).ready(function() {
 
 		}
 
-		camera.translateX( seno );
-		camera.translateZ( coseno );
+		//camera.translateX( seno );
+		//camera.translateZ( coseno );
+		
+		var grados_joystick = Math.asin(seno) * (180/Math.PI);
+		
+		if( grados_joystick > 0 ){
+			if(coseno > 0){ grados_joystick = 180 - grados_joystick; }
+		} else {
+			if(coseno > 0){ grados_joystick = 180 - grados_joystick; }
+			else{ grados_joystick += 360; }
+		}
+		
+		var grados_camara = controls.getAzimuthalAngle() * (180/Math.PI);
+		
+		if( grados_camara < 0 ){
+			grados_camara = -grados_camara;
+		} else {
+			grados_camara = 360 - grados_camara;
+		}
+		
+		var grados_totales = ( (grados_joystick + grados_camara) % 360 ) * (Math.PI/180);
+		
+		//console.log(grados_joystick + "; " + camera.rotation.y * (180/Math.PI));
+		//console.log(camera.rotation.y);
+		//console.log( grados_camara );
+		
+		if (moving){
+			camera.position.x += Math.sin(grados_totales);
+			camera.position.z -= Math.cos(grados_totales);
+		}
 		
 		//controls.getObject().position.x = camera.position.x;
 		//controls.getObject().position.z = camera.position.z;
@@ -389,6 +440,8 @@ $(document).ready(function() {
 		prevTime = time;
 
 		renderer.render( scene, camera );
+		
+		//updateCameraOrbit();
 
 	}
 	
