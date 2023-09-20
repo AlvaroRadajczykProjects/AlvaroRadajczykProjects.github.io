@@ -1,10 +1,180 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { FirstPersonControls } from 'three/addons/controls/FirstPersonControls.js';
 
 $(document).ready(function() {
+	
+	var touch_pos_x = 0.0;
+	var touch_pos_y = 0.0;
+	
+	var hipotenusa = 0.0;
+	var seno = 0.0;
+	var coseno = 0.0;
+	
+	function getOffset(el) {
+		const rect = el.getBoundingClientRect();
+		return {
+			left: rect.left + window.scrollX,
+			top: rect.top + window.scrollY
+		};
+	}
+
+	function dragElementComputer(elmnt) {
+		var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+		
+		elmnt.onmousedown = dragMouseDown;
+
+		function dragMouseDown(e) {
+			e = e || window.event;
+			e.preventDefault();
+			// get the mouse cursor position at startup:
+			pos3 = e.clientX;
+			pos4 = e.clientY;
+			document.onmouseup = closeDragElement;
+			// call a function whenever the cursor moves:
+			document.onmousemove = elementDrag;
+		}
+
+		function elementDrag(e) {
+			e = e || window.event;
+			e.preventDefault();
+			// calculate the new cursor position:
+			
+			pos1 = pos3 - e.clientX;
+			pos2 = pos4 - e.clientY;
+			pos3 = e.clientX;
+			pos4 = e.clientY;
+			
+			touch_pos_x = e.clientX;
+			touch_pos_y = e.clientY;
+			
+			if ( elmnt.parentElement != "" || elmnt.parentElement != null ) {
+			
+				var padre = elmnt.parentElement
+				var padre_centrox = getOffset(padre).left + padre.offsetWidth/2;
+				var padre_centroy = getOffset(padre).top + padre.offsetHeight/2;
+				var hijo_centrox = getOffset(elmnt).left + elmnt.offsetWidth/2;
+				var hijo_centroy = getOffset(elmnt).top + elmnt.offsetHeight/2;
+			
+				hipotenusa = Math.sqrt( Math.pow(padre_centrox -  e.clientX, 2.0) + Math.pow(padre_centroy -  e.clientY, 2.0) )
+				seno = (e.clientX-padre_centrox)/hipotenusa;
+				coseno = (e.clientY-padre_centroy)/hipotenusa;
+			
+				if( hipotenusa < 50 ){
+					elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+					elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+				} else {
+					//Math.PI
+					elmnt.style.left = ( padre.offsetWidth/2 - elmnt.offsetWidth/2 ) + seno*50 + "px";
+					elmnt.style.top = ( padre.offsetHeight/2 - elmnt.offsetHeight/2 ) + coseno*50 + "px";
+				}
+
+			}
+		}
+
+		function closeDragElement() {
+			// stop moving when mouse button is released:
+			var padre = elmnt.parentElement
+
+			elmnt.style.top = padre.offsetHeight/2 - elmnt.offsetHeight/2 + "px";
+			elmnt.style.left = padre.offsetWidth/2 - elmnt.offsetWidth/2 + "px";
+			
+			seno = 0;
+			coseno = 0;
+			
+			document.onmouseup = null;
+			document.onmousemove = null;
+		}
+	  
+	}
+	
+	function dragElementMobile(elmnt) {
+	
+		var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+		elmnt.addEventListener("touchstart", handleStart);
+		elmnt.addEventListener("touchend", handleEnd);
+		elmnt.addEventListener("touchcancel", handleCancel);
+		elmnt.addEventListener("touchmove", handleMove);
+		
+		function handleStart(evt) {
+			evt.preventDefault();
+			var touches = evt.changedTouches;
+			var touch = touches[0];
+			pos3 = touch.pageX;
+			pos4 = touch.pageY;
+		}
+
+		function handleMove(evt) {
+			evt.preventDefault();
+			var touches = evt.changedTouches;
+			var touch = touches[0];
+			
+			pos1 = pos3 - touch.pageX;
+			pos2 = pos4 - touch.pageY;
+			pos3 = touch.pageX;
+			pos4 = touch.pageY;
+			
+			if ( elmnt.parentElement != "" || elmnt.parentElement != null ) {
+			
+				var padre = elmnt.parentElement
+				var padre_centrox = getOffset(padre).left + padre.offsetWidth/2;
+				var padre_centroy = getOffset(padre).top + padre.offsetHeight/2;
+				var hijo_centrox = getOffset(elmnt).left + elmnt.offsetWidth/2;
+				var hijo_centroy = getOffset(elmnt).top + elmnt.offsetHeight/2;
+			
+				hipotenusa = Math.sqrt( Math.pow(padre_centrox -  touch.pageX, 2.0) + Math.pow(padre_centroy -  touch.pageY, 2.0) )
+				seno = (touch.pageX-padre_centrox)/hipotenusa;
+				coseno = (touch.pageY-padre_centroy)/hipotenusa;
+			
+				if( hipotenusa < 50 ){
+					elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+					elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+				} else {
+					//Math.PI
+					elmnt.style.left = ( padre.offsetWidth/2 - elmnt.offsetWidth/2 ) + seno*50 + "px";
+					elmnt.style.top = ( padre.offsetHeight/2 - elmnt.offsetHeight/2 ) + coseno*50 + "px";
+				}
+
+			}
+		}
+
+		function handleEnd(evt) {
+			evt.preventDefault();
+			var padre = elmnt.parentElement
+			elmnt.style.top = padre.offsetHeight/2 - elmnt.offsetHeight/2 + "px";
+			elmnt.style.left = padre.offsetWidth/2 - elmnt.offsetWidth/2 + "px";
+			seno = 0;
+			coseno = 0;
+		}
+
+		function handleCancel(evt) {
+			evt.preventDefault();
+		}
+	  
+	}
+	
+	function dragElement(elmnt) {
+		if ( elmnt.parentElement != "" || elmnt.parentElement != null ) {
+			var padre = elmnt.parentElement
+			elmnt.style.left = padre.offsetWidth/2 - elmnt.offsetWidth/2 + "px";
+			elmnt.style.top = padre.offsetHeight/2 - elmnt.offsetHeight/2 + "px";
+		}
+	
+		if ('ontouchstart' in window || navigator.maxTouchPoints) {
+			dragElementMobile(elmnt);
+		} else {
+			dragElementComputer(elmnt);
+		}
+	}
+
+	dragElement(document.getElementById("joystick_control"));
+	
+/* =========================================================== THREE JS ======================================================= */
 
 	let pointerLockActivatedAt = null;
 
-	let camera, scene, renderer;
+	let camera, scene, renderer, controls;
 
 	const objects = [];
 
@@ -38,71 +208,22 @@ $(document).ready(function() {
 		light.position.set( 0.5, 1, 0.75 );
 		scene.add( light );
 
-		scene.add( camera );
+		controls = new OrbitControls(camera, document.getElementById("container"));
+  
+		  const updateCameraOrbit = () => {
+			const forward = new THREE.Vector3();
+			camera.getWorldDirection(forward);
 
-		const onKeyDown = function ( event ) {
+			controls.target.copy(camera.position).add(forward);
+		  };
+		  
+		  controls.addEventListener('end', () => {
+			updateCameraOrbit();
+		  });
+		  
+		  updateCameraOrbit();
 
-			switch ( event.code ) {
-
-				case 'ArrowUp':
-				case 'KeyW':
-					moveForward = true;
-					break;
-
-				case 'ArrowLeft':
-				case 'KeyA':
-					moveLeft = true;
-					break;
-
-				case 'ArrowDown':
-				case 'KeyS':
-					moveBackward = true;
-					break;
-
-				case 'ArrowRight':
-				case 'KeyD':
-					moveRight = true;
-					break;
-
-				case 'Space':
-					if ( canJump === true ) velocity.y += 350;
-					canJump = false;
-					break;
-
-			}
-
-		};
-
-		const onKeyUp = function ( event ) {
-
-			switch ( event.code ) {
-
-				case 'ArrowUp':
-				case 'KeyW':
-					moveForward = false;
-					break;
-
-				case 'ArrowLeft':
-				case 'KeyA':
-					moveLeft = false;
-					break;
-
-				case 'ArrowDown':
-				case 'KeyS':
-					moveBackward = false;
-					break;
-
-				case 'ArrowRight':
-				case 'KeyD':
-					moveRight = false;
-					break;
-
-			}
-
-		};
-
-		document.addEventListener( 'keydown', onKeyDown );
-		document.addEventListener( 'keyup', onKeyUp );
+		scene.add( controls );
 
 		raycaster = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, - 1, 0 ), 0, 10 );
 
@@ -234,10 +355,13 @@ $(document).ready(function() {
 
 		}
 
-		camera.translateX( - velocity.x * delta );
-		camera.translateZ( velocity.z * delta );
+		camera.translateX( seno );
+		camera.translateZ( coseno );
 		
-		camera.position.y += ( velocity.y * delta );
+		//controls.getObject().position.x = camera.position.x;
+		//controls.getObject().position.z = camera.position.z;
+		
+		/*camera.position.y += ( velocity.y * delta );
 		
 		if ( camera.position.y < 10 ) {
 
@@ -246,7 +370,7 @@ $(document).ready(function() {
 
 			canJump = true;
 
-		}
+		}*/
 		
 		/*controls.moveRight( - velocity.x * delta );
 		controls.moveForward( - velocity.z * delta );
