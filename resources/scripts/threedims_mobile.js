@@ -95,6 +95,19 @@ $(document).ready(function() {
 	  
 	}
 	
+	function getNearestTouchIndex (touches, padrex, padrey) {
+		var idx = 0;
+		var mindis = 9999;
+		for(let i = 0; i < touches.length; i++) {
+			var distancia = Math.sqrt( Math.pow(padrex - touches[i].pageX, 2.0) + Math.pow(padrey - touches[i].pageY, 2.0) );
+			if( distancia < mindis ){
+				mindis = distancia;
+				idx = i;
+			}
+		}
+		return idx;
+	}
+	
 	function dragElementMobile(elmnt) {
 	
 		var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
@@ -108,29 +121,38 @@ $(document).ready(function() {
 			evt.preventDefault();
 			
 			moving = true;
-			var touches = evt.changedTouches;
-			var touch = touches[0];
-			pos3 = touch.pageX;
-			pos4 = touch.pageY;
+			
+			if ( elmnt.parentElement != "" || elmnt.parentElement != null ) {
+				var padre = elmnt.parentElement;
+				var padre_centrox = getOffset(padre).left + padre.offsetWidth/2;
+				var padre_centroy = getOffset(padre).top + padre.offsetHeight/2;
+				
+				var touches = evt.changedTouches;
+				var touch = touches[getNearestTouchIndex(touches, padre_centrox, padre_centroy)]; //
+				
+				pos3 = touch.pageX;
+				pos4 = touch.pageY;
+			}
 		}
 
 		function handleMove(evt) {
 			evt.preventDefault();
-			
-			moving = true;
-			var touches = evt.changedTouches;
-			var touch = touches[0];
-			
-			pos1 = pos3 - touch.pageX;
-			pos2 = pos4 - touch.pageY;
-			pos3 = touch.pageX;
-			pos4 = touch.pageY;
 			
 			if ( elmnt.parentElement != "" || elmnt.parentElement != null ) {
 			
 				var padre = elmnt.parentElement
 				var padre_centrox = getOffset(padre).left + padre.offsetWidth/2;
 				var padre_centroy = getOffset(padre).top + padre.offsetHeight/2;
+			
+				moving = true;
+				var touches = evt.changedTouches;
+				var touch = touches[getNearestTouchIndex(touches, padre_centrox, padre_centroy)];
+				
+				pos1 = pos3 - touch.pageX;
+				pos2 = pos4 - touch.pageY;
+				pos3 = touch.pageX;
+				pos4 = touch.pageY;
+
 				var hijo_centrox = getOffset(elmnt).left + elmnt.offsetWidth/2;
 				var hijo_centroy = getOffset(elmnt).top + elmnt.offsetHeight/2;
 			
@@ -231,22 +253,10 @@ $(document).ready(function() {
 		controls.enableZoom = false;
 		controls.enablePan = false;
 		
-		controls.addEventListener('change', () => {
-			camera.getWorldDirection(forward);
-			controls.target.copy(camera.position).add(forward);
-		});
-		
-		controls.addEventListener('start', () => {
-			camera.getWorldDirection(forward);
-			controls.target.copy(camera.position).add(forward);
-		});
-		
-		controls.addEventListener('end', () => {
-			camera.getWorldDirection(forward);
-			controls.target.copy(camera.position).add(forward);
-		});
+		controls.touches.TWO = null;
+		controls.zoomSpeed = 0.0;
 
-		scene.add( camera );
+		scene.add( controls );
 
 		raycaster = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, - 1, 0 ), 0, 10 );
 
@@ -321,14 +331,10 @@ $(document).ready(function() {
 
 		}
 
-		//
-
 		renderer = new THREE.WebGLRenderer( { antialias: true } );
 		renderer.setPixelRatio( window.devicePixelRatio );
 		renderer.setSize( window.innerWidth, window.innerHeight );
 		document.body.appendChild( renderer.domElement );
-
-		//
 
 		window.addEventListener( 'resize', onWindowResize );
 
@@ -377,9 +383,6 @@ $(document).ready(function() {
 			canJump = true;
 
 		}
-
-		//camera.translateX( seno );
-		//camera.translateZ( coseno );
 		
 		var grados_joystick = Math.asin(seno) * (180/Math.PI);
 		
@@ -398,50 +401,19 @@ $(document).ready(function() {
 			grados_camara = 360 - grados_camara;
 		}
 		
-		var grados_totales = ( (grados_joystick + grados_camara) % 360 ) * (Math.PI/180);
-		
-		//console.log(grados_joystick + "; " + camera.rotation.y * (180/Math.PI));
-		//console.log(camera.rotation.y);
-		//console.log( grados_camara );
+		var grados_totales = ( (grados_joystick + grados_camara) ) * (Math.PI/180);
 		
 		if (moving){
 			camera.position.x += Math.sin(grados_totales);
 			camera.position.z -= Math.cos(grados_totales);
 		}
-		
-		//controls.getObject().position.x = camera.position.x;
-		//controls.getObject().position.z = camera.position.z;
-		
-		/*camera.position.y += ( velocity.y * delta );
-		
-		if ( camera.position.y < 10 ) {
-
-			velocity.y = 0;
-			camera.position.y = 10;
-
-			canJump = true;
-
-		}*/
-		
-		/*controls.moveRight( - velocity.x * delta );
-		controls.moveForward( - velocity.z * delta );
-
-		controls.getObject().position.y += ( velocity.y * delta ); // new behavior
-
-		if ( controls.getObject().position.y < 10 ) {
-
-			velocity.y = 0;
-			controls.getObject().position.y = 10;
-
-			canJump = true;
-
-		}*/
 
 		prevTime = time;
 
 		renderer.render( scene, camera );
 		
-		//updateCameraOrbit();
+		camera.getWorldDirection(forward);
+		controls.target.copy(camera.position).add(forward);
 
 	}
 	
