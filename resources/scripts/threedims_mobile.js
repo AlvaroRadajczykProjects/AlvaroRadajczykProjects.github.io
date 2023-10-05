@@ -2,6 +2,10 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { FirstPersonControls } from 'three/addons/controls/FirstPersonControls.js';
 
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { LoadingManager } from 'three/src/loaders/LoadingManager.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+
 $(document).ready(function() {
 	
 	var touch_pos_x = 0.0;
@@ -232,9 +236,30 @@ $(document).ready(function() {
 	const color = new THREE.Color();
 	
 	let updateCameraOrbit = 0;
+	
+	
+	
+	var manager = new THREE.LoadingManager();
 
-	init();
-	animate();
+	var fuente1 = null;
+	var font_loader = new FontLoader(manager);
+	
+	font_loader.load('../fonts/helvetiker_bold.typeface.json', function(response) {
+		fuente1 = response;
+	});
+
+	manager.onLoad = function() { // when all resources are loaded
+		init();
+		animate();
+	}
+
+	function d3d_texto1(text, textGeometryProps, textMeshProps, ) {
+		const textG = new TextGeometry( text, textGeometryProps );
+		const textM = new THREE.MeshPhongMaterial( textMeshProps );
+		var textMesh = new THREE.Mesh(textG, textM);
+		textMesh.castShadow = true;
+		return textMesh;
+	}
 
 	function init() {
 
@@ -257,79 +282,55 @@ $(document).ready(function() {
 		controls.zoomSpeed = 0.0;
 
 		scene.add( controls );
+		camera.rotation.set(0, 0, 0); //x * (180/Math.PI)
 
 		raycaster = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, - 1, 0 ), 0, 10 );
 
-		// floor
-
-		let floorGeometry = new THREE.PlaneGeometry( 2000, 2000, 100, 100 );
-		floorGeometry.rotateX( - Math.PI / 2 );
-
-		// vertex displacement
-
-		let position = floorGeometry.attributes.position;
-
-		for ( let i = 0, l = position.count; i < l; i ++ ) {
-
-			vertex.fromBufferAttribute( position, i );
-
-			vertex.x += Math.random() * 20 - 10;
-			vertex.y += Math.random() * 2;
-			vertex.z += Math.random() * 20 - 10;
-
-			position.setXYZ( i, vertex.x, vertex.y, vertex.z );
-
-		}
-
-		floorGeometry = floorGeometry.toNonIndexed(); // ensure each face has unique vertices
-
-		position = floorGeometry.attributes.position;
-		const colorsFloor = [];
-
-		for ( let i = 0, l = position.count; i < l; i ++ ) {
-
-			color.setHSL( Math.random() * 0.3 + 0.5, 0.75, Math.random() * 0.25 + 0.75, THREE.SRGBColorSpace );
-			colorsFloor.push( color.r, color.g, color.b );
-
-		}
-
-		floorGeometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colorsFloor, 3 ) );
-
-		const floorMaterial = new THREE.MeshBasicMaterial( { vertexColors: true } );
-
-		const floor = new THREE.Mesh( floorGeometry, floorMaterial );
-		scene.add( floor );
-
-		// objects
-
-		const boxGeometry = new THREE.BoxGeometry( 20, 20, 20 ).toNonIndexed();
-
-		position = boxGeometry.attributes.position;
-		const colorsBox = [];
-
-		for ( let i = 0, l = position.count; i < l; i ++ ) {
-
-			color.setHSL( Math.random() * 0.3 + 0.5, 0.75, Math.random() * 0.25 + 0.75, THREE.SRGBColorSpace );
-			colorsBox.push( color.r, color.g, color.b );
-
-		}
-
-		boxGeometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colorsBox, 3 ) );
-
-		for ( let i = 0; i < 500; i ++ ) {
-
-			const boxMaterial = new THREE.MeshPhongMaterial( { specular: 0xffffff, flatShading: true, vertexColors: true } );
-			boxMaterial.color.setHSL( Math.random() * 0.2 + 0.5, 0.75, Math.random() * 0.25 + 0.75, THREE.SRGBColorSpace );
-
-			const box = new THREE.Mesh( boxGeometry, boxMaterial );
-			box.position.x = Math.floor( Math.random() * 20 - 10 ) * 20;
-			box.position.y = Math.floor( Math.random() * 20 ) * 20 + 10;
-			box.position.z = Math.floor( Math.random() * 20 - 10 ) * 20;
-
-			scene.add( box );
-			objects.push( box );
-
-		}
+		var texto1 = d3d_texto1(
+			"Actualmente",
+			{
+				font: fuente1, size: 80, height: 5, curveSegments: 12,
+				bevelEnabled: true, bevelThickness: 10, bevelSize: 3, bevelOffset: 0, 
+				bevelSegments: 5
+			},
+			{ 
+				color: 0xffaaaa, specular: 0xffaaaa, shininess: 30, shading: THREE.FlatShading
+			}
+		)
+		texto1.scale.set(0.5,0.5,0.5)
+		texto1.position.set(-160, 50, -200)
+		
+		var texto2 = d3d_texto1(
+			"en",
+			{
+				font: fuente1, size: 80, height: 5, curveSegments: 12,
+				bevelEnabled: true, bevelThickness: 10, bevelSize: 3, bevelOffset: 0, 
+				bevelSegments: 5
+			},
+			{ 
+				color: 0xffaaaa, specular: 0xffaaaa, shininess: 30, shading: THREE.FlatShading
+			}
+		)
+		texto2.scale.set(0.5,0.5,0.5)
+		texto2.position.set(-20, 0, -200)
+		
+		var texto3 = d3d_texto1(
+			"desarrollo",
+			{
+				font: fuente1, size: 80, height: 5, curveSegments: 12,
+				bevelEnabled: true, bevelThickness: 10, bevelSize: 3, bevelOffset: 0, 
+				bevelSegments: 5
+			},
+			{ 
+				color: 0xffaaaa, specular: 0xffaaaa, shininess: 30, shading: THREE.FlatShading
+			}
+		)
+		texto3.scale.set(0.5,0.5,0.5)
+		texto3.position.set(-130, -50, -200)
+		
+		scene.add(texto1)
+		scene.add(texto2)
+		scene.add(texto3)
 
 		renderer = new THREE.WebGLRenderer( { antialias: true } );
 		renderer.setPixelRatio( window.devicePixelRatio );

@@ -1,16 +1,20 @@
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { LoadingManager } from 'three/src/loaders/LoadingManager.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+
 $(document).ready(function() {
 
 	let pointerLockActivatedAt = null;
-
+	
 	let camera, scene, renderer, controls;
 
 	const objects = [];
 
 	let raycaster;
-
+	
 	let moveForward = false;
 	let moveBackward = false;
 	let moveLeft = false;
@@ -22,9 +26,28 @@ $(document).ready(function() {
 	const direction = new THREE.Vector3();
 	const vertex = new THREE.Vector3();
 	const color = new THREE.Color();
+	
+	var manager = new THREE.LoadingManager();
 
-	init();
-	animate();
+	var fuente1 = null;
+	var font_loader = new FontLoader(manager);
+	
+	font_loader.load('../fonts/helvetiker_bold.typeface.json', function(response) {
+		fuente1 = response;
+	});
+
+	manager.onLoad = function() { // when all resources are loaded
+	  init();
+	  animate();
+	}
+
+	function d3d_texto1(text, textGeometryProps, textMeshProps, ) {
+		const textG = new TextGeometry( text, textGeometryProps );
+		const textM = new THREE.MeshPhongMaterial( textMeshProps );
+		var textMesh = new THREE.Mesh(textG, textM);
+		textMesh.castShadow = true;
+		return textMesh;
+	}
 
 	function init() {
 
@@ -93,11 +116,6 @@ $(document).ready(function() {
 					moveRight = true;
 					break;
 
-				case 'Space':
-					if ( canJump === true ) velocity.y += 350;
-					canJump = false;
-					break;
-
 			}
 
 		};
@@ -134,7 +152,56 @@ $(document).ready(function() {
 		document.addEventListener( 'keyup', onKeyUp );
 
 		raycaster = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, - 1, 0 ), 0, 10 );
+		
+		var texto1 = d3d_texto1(
+			"Actualmente",
+			{
+				font: fuente1, size: 80, height: 5, curveSegments: 12,
+				bevelEnabled: true, bevelThickness: 10, bevelSize: 3, bevelOffset: 0, 
+				bevelSegments: 5
+			},
+			{ 
+				color: 0xffaaaa, specular: 0xffaaaa, shininess: 30, shading: THREE.FlatShading
+			}
+		)
+		texto1.scale.set(0.5,0.5,0.5)
+		texto1.position.set(-160, 50, -200)
+		
+		var texto2 = d3d_texto1(
+			"en",
+			{
+				font: fuente1, size: 80, height: 5, curveSegments: 12,
+				bevelEnabled: true, bevelThickness: 10, bevelSize: 3, bevelOffset: 0, 
+				bevelSegments: 5
+			},
+			{ 
+				color: 0xffaaaa, specular: 0xffaaaa, shininess: 30, shading: THREE.FlatShading
+			}
+		)
+		texto2.scale.set(0.5,0.5,0.5)
+		texto2.position.set(-20, 0, -200)
+		
+		var texto3 = d3d_texto1(
+			"desarrollo",
+			{
+				font: fuente1, size: 80, height: 5, curveSegments: 12,
+				bevelEnabled: true, bevelThickness: 10, bevelSize: 3, bevelOffset: 0, 
+				bevelSegments: 5
+			},
+			{ 
+				color: 0xffaaaa, specular: 0xffaaaa, shininess: 30, shading: THREE.FlatShading
+			}
+		)
+		texto3.scale.set(0.5,0.5,0.5)
+		texto3.position.set(-130, -50, -200)
+		
+		scene.add(texto1)
+		scene.add(texto2)
+		scene.add(texto3)
+		
+		//f3d_texto( "hola" )
 
+		/*
 		// floor
 
 		let floorGeometry = new THREE.PlaneGeometry( 2000, 2000, 100, 100 );
@@ -174,6 +241,7 @@ $(document).ready(function() {
 
 		const floor = new THREE.Mesh( floorGeometry, floorMaterial );
 		scene.add( floor );
+		
 
 		// objects
 
@@ -191,7 +259,7 @@ $(document).ready(function() {
 
 		boxGeometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colorsBox, 3 ) );
 
-		for ( let i = 0; i < 500; i ++ ) {
+		for ( let i = 0; i < 1; i ++ ) {
 
 			const boxMaterial = new THREE.MeshPhongMaterial( { specular: 0xffffff, flatShading: true, vertexColors: true } );
 			boxMaterial.color.setHSL( Math.random() * 0.2 + 0.5, 0.75, Math.random() * 0.25 + 0.75, THREE.SRGBColorSpace );
@@ -205,6 +273,7 @@ $(document).ready(function() {
 			objects.push( box );
 
 		}
+		*/
 
 		//
 
