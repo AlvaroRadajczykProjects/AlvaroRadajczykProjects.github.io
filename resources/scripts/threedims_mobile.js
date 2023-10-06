@@ -311,7 +311,7 @@ function init() {
 	renderer.domElement.style.top = 0;
 	//renderer.domElement.style.zIndex = '1';
 	
-	renderer1 = new THREE.WebGLRenderer( { alpha: true } );
+	renderer1 = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
 	renderer1.setSize( window.innerWidth, window.innerHeight );
 	renderer1.domElement.style.position = 'absolute';
 	renderer1.domElement.style.top = 0;

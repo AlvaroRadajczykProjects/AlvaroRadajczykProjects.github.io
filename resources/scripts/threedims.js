@@ -5,11 +5,13 @@ import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { LoadingManager } from 'three/src/loaders/LoadingManager.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
+import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
+
 $(document).ready(function() {
 
 	let pointerLockActivatedAt = null;
 	
-	let camera, scene, renderer, controls;
+	let camera, scene, renderer, renderer1, controls;
 
 	const objects = [];
 
@@ -73,12 +75,10 @@ $(document).ready(function() {
 
 	function init() {
 
-		camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
+		camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
 		camera.position.y = 10;
 
 		scene = new THREE.Scene();
-		scene.background = new THREE.Color( 0xffffff );
-		scene.fog = new THREE.Fog( 0xffffff, 0, 750 );
 
 		const light = new THREE.HemisphereLight( 0xeeeeff, 0x777788, 2.5 );
 		light.position.set( 0.5, 1, 0.75 );
@@ -88,6 +88,9 @@ $(document).ready(function() {
 
 		const blocker = document.getElementById( 'blocker' );
 		const instructions = document.getElementById( 'instructions' );
+
+		blocker.style.zIndex = '2';
+		instructions.style.zIndex = '3';
 
 		instructions.addEventListener( 'click', function () {
 			if ( pointerLockActivatedAt == null ){
@@ -221,90 +224,28 @@ $(document).ready(function() {
 		scene.add(texto2)
 		scene.add(texto3)
 		
-		//f3d_texto( "hola" )
+		const group = new THREE.Group();
+		group.add( new Element( 'SJOz3qjfQXU', 0, 0, 240-1000, 0 ) );
+		group.add( new Element( 'Y2-xZ-1HE-Q', 240, 0, -1000, Math.PI / 2 ) );
+		group.add( new Element( 'IrydklNpcFI', 0, 0, - 240-1000, Math.PI ) );
+		group.add( new Element( '9ubytEsCaS0', - 240, 0, -1000, - Math.PI / 2 ) );
+		scene.add( group );
 
-		/*
-		// floor
-
-		let floorGeometry = new THREE.PlaneGeometry( 2000, 2000, 100, 100 );
-		floorGeometry.rotateX( - Math.PI / 2 );
-
-		// vertex displacement
-
-		let position = floorGeometry.attributes.position;
-
-		for ( let i = 0, l = position.count; i < l; i ++ ) {
-
-			vertex.fromBufferAttribute( position, i );
-
-			vertex.x += Math.random() * 20 - 10;
-			vertex.y += Math.random() * 2;
-			vertex.z += Math.random() * 20 - 10;
-
-			position.setXYZ( i, vertex.x, vertex.y, vertex.z );
-
-		}
-
-		floorGeometry = floorGeometry.toNonIndexed(); // ensure each face has unique vertices
-
-		position = floorGeometry.attributes.position;
-		const colorsFloor = [];
-
-		for ( let i = 0, l = position.count; i < l; i ++ ) {
-
-			color.setHSL( Math.random() * 0.3 + 0.5, 0.75, Math.random() * 0.25 + 0.75, THREE.SRGBColorSpace );
-			colorsFloor.push( color.r, color.g, color.b );
-
-		}
-
-		floorGeometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colorsFloor, 3 ) );
-
-		const floorMaterial = new THREE.MeshBasicMaterial( { vertexColors: true } );
-
-		const floor = new THREE.Mesh( floorGeometry, floorMaterial );
-		scene.add( floor );
-		
-
-		// objects
-
-		const boxGeometry = new THREE.BoxGeometry( 20, 20, 20 ).toNonIndexed();
-
-		position = boxGeometry.attributes.position;
-		const colorsBox = [];
-
-		for ( let i = 0, l = position.count; i < l; i ++ ) {
-
-			color.setHSL( Math.random() * 0.3 + 0.5, 0.75, Math.random() * 0.25 + 0.75, THREE.SRGBColorSpace );
-			colorsBox.push( color.r, color.g, color.b );
-
-		}
-
-		boxGeometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colorsBox, 3 ) );
-
-		for ( let i = 0; i < 1; i ++ ) {
-
-			const boxMaterial = new THREE.MeshPhongMaterial( { specular: 0xffffff, flatShading: true, vertexColors: true } );
-			boxMaterial.color.setHSL( Math.random() * 0.2 + 0.5, 0.75, Math.random() * 0.25 + 0.75, THREE.SRGBColorSpace );
-
-			const box = new THREE.Mesh( boxGeometry, boxMaterial );
-			box.position.x = Math.floor( Math.random() * 20 - 10 ) * 20;
-			box.position.y = Math.floor( Math.random() * 20 ) * 20 + 10;
-			box.position.z = Math.floor( Math.random() * 20 - 10 ) * 20;
-
-			scene.add( box );
-			objects.push( box );
-
-		}
-		*/
-
-		//
-
-		renderer = new THREE.WebGLRenderer( { antialias: true } );
-		renderer.setPixelRatio( window.devicePixelRatio );
+		renderer = new CSS3DRenderer();
 		renderer.setSize( window.innerWidth, window.innerHeight );
+		renderer.domElement.style.position = 'absolute';
+		renderer.domElement.style.top = 0;
+		//renderer.domElement.style.zIndex = '1';
+		
+		renderer1 = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
+		renderer1.setSize( window.innerWidth, window.innerHeight );
+		renderer1.domElement.style.position = 'absolute';
+		renderer1.domElement.style.top = 0;
+		renderer1.domElement.style.zIndex = '1';
+		renderer1.domElement.style.pointerEvents = 'none'
+		
 		document.body.appendChild( renderer.domElement );
-
-		//
+		document.body.appendChild( renderer1.domElement );
 
 		window.addEventListener( 'resize', onWindowResize );
 
@@ -316,6 +257,7 @@ $(document).ready(function() {
 		camera.updateProjectionMatrix();
 
 		renderer.setSize( window.innerWidth, window.innerHeight );
+		renderer1.setSize( window.innerWidth, window.innerHeight );
 
 	}
 
@@ -374,6 +316,7 @@ $(document).ready(function() {
 		prevTime = time;
 
 		renderer.render( scene, camera );
+		renderer1.render( scene, camera );
 
 	}
 	
