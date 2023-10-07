@@ -29,11 +29,14 @@
 					<p>En esta sección podrás encotrar todos los proyectos en los que he estado trabajando y tengo públicos en un repositorio de GitHub</p>
 				</div>
 				
-				<script type="text/javascript">
+				<script type="module">
 					
 					//función de iterador árbol
-					function myFunction(value, index, array) {
-						console.log(value.path);
+					function myIterator(value, index, array) {
+						const file_name = value.path;
+						const object = document.createElement("p")
+						object.innerHTML = "<a href=\"proyectos/"+file_name+"\">Enlace "+file_name.split(".")[0]+"</a>"
+						document.getElementById("body_content").appendChild(object)
 					}
 					
 					/*
@@ -41,14 +44,28 @@
 						prueba varios archivos: 1d35e49e5430907a2dd7b788e62dbac80b57074a
 						carpeta a usar: bed244a816456a3dd1ba042820fecc39abc8eff5
 					*/
-					async function getFilesInProjectsDirectory(token){
+					async function getFilesInToken(token){
 						const list = await fetch("https://api.github.com/repos/AlvaroRadajczykProjects/AlvaroRadajczykProjects.github.io/git/trees/"+token).then(res => res.json());
-						const tree = list.tree
-						tree.forEach(myFunction);
-						//console.log(tree)
+						const tree = list.tree;
+						return tree;
 					}
 					
-					getFilesInProjectsDirectory("bed244a816456a3dd1ba042820fecc39abc8eff5")
+					//console.log( await getFilesInProjectDirectory("resources/pages/proyectos") )
+					async function getFilesInProjectDirectory(directory){
+						const split = (directory).split("/");
+						var tree = await getFilesInToken("main");
+						const tam = split.length;
+						for (let i = 0; i < tam; i++) {
+							const folder_name = split.shift()
+							const token = tree.find(node => node.path === folder_name).sha
+							tree = await getFilesInToken(token)
+						}
+						return tree;
+					}
+					
+					const lista = await getFilesInProjectDirectory("resources/pages/proyectos")
+					
+					lista.forEach(myIterator)
 					
 				</script>
 				
