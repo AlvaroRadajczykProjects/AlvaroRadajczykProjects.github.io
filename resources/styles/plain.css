@@ -5,6 +5,30 @@ body {
 	height: 100vh; /* or simply use height:100% with body and html */
 }
 
+/* unvisited link */
+a:link {
+  color: #2D90B5;
+}
+
+/* visited link */
+a:visited {
+  color: #2D90B5;
+}
+
+/* mouse over link */
+a:hover {
+  color: grey;
+}
+
+/* selected link */
+a:active {
+  color: blue;
+}
+
+h3 {
+	color: rgb(0,186,253);
+}
+
 #frame {
 	border: none;
 	width: 100%;
@@ -12,7 +36,7 @@ body {
 
 #first_image_container {
 	width: 100%;
-	height: calc( 100px + 24vw );
+	height: calc( 100px + 20vw );
 	padding: 0;
 	position: relative;
 	background-size: 100% 100%;
@@ -37,6 +61,7 @@ body {
 	font-size: calc(30px + 1.8vw); 
 	font-family:'Tahoma'; 
 	user-select: none;
+	color: rgb(0,186,253);
 }
 
 #body_content {
