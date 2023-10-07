@@ -30,12 +30,25 @@
 				</div>
 				
 				<script type="text/javascript">
-					function list_directory(user, repo, directory) {
-						const url = "https://api.github.com/repos/"+user+"/"+repo+"/git/trees/main";
-						return url
+					
+					//función de iterador árbol
+					function myFunction(value, index, array) {
+						console.log(value.path);
 					}
-				
-					console.log( list_directory("AlvaroRadajczykProjects", "AlvaroRadajczykProjects.github.io", "resources/pages/proyectos") )
+					
+					/*
+						rama principal: main
+						prueba varios archivos: 1d35e49e5430907a2dd7b788e62dbac80b57074a
+						carpeta a usar: bed244a816456a3dd1ba042820fecc39abc8eff5
+					*/
+					async function getFilesInProjectsDirectory(token){
+						const list = await fetch("https://api.github.com/repos/AlvaroRadajczykProjects/AlvaroRadajczykProjects.github.io/git/trees/"+token).then(res => res.json());
+						const tree = list.tree
+						tree.forEach(myFunction);
+						//console.log(tree)
+					}
+					
+					getFilesInProjectsDirectory("bed244a816456a3dd1ba042820fecc39abc8eff5")
 					
 				</script>
 				
