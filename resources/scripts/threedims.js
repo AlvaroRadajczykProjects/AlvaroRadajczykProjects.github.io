@@ -21,7 +21,8 @@ $(document).ready(function() {
 	let moveBackward = false;
 	let moveLeft = false;
 	let moveRight = false;
-	let canJump = false;
+	let waitSpace = true;
+	let interactVideoMode = false;
 
 	let prevTime = performance.now();
 	const velocity = new THREE.Vector3();
@@ -111,8 +112,12 @@ $(document).ready(function() {
 
 		controls.addEventListener( 'unlock', function () {
 			pointerLockActivatedAt = performance.now();
-			blocker.style.display = 'block';
-			instructions.style.display = '';
+			if(!interactVideoMode){
+				instructions.style.width = "100%"
+				blocker.style.width = "100%"
+				blocker.style.display = 'block';
+				instructions.style.display = '';
+			}
 		} );
 
 		scene.add( controls.getObject() );
@@ -140,6 +145,26 @@ $(document).ready(function() {
 				case 'KeyD':
 					moveRight = true;
 					break;
+					
+				case 'Space':
+					if(waitSpace){
+						if(controls.isLocked){
+							interactVideoMode = true
+							instructions.style.width = "0%"
+							blocker.style.width = "0%"
+							blocker.style.display = 'none';
+							instructions.style.display = 'none';
+							controls.unlock();
+							pointerLockActivatedAt = performance.now();
+						} else {
+							interactVideoMode = false
+							controls.lock();
+							pointerLockActivatedAt = performance.now();
+						}
+						console.log(interactVideoMode)
+					}
+					waitSpace = false;
+				break;
 
 			}
 
@@ -168,6 +193,10 @@ $(document).ready(function() {
 				case 'KeyD':
 					moveRight = false;
 					break;
+				
+				case 'Space':
+					waitSpace = true;
+				break;
 
 			}
 
@@ -241,8 +270,8 @@ $(document).ready(function() {
 		renderer1.setSize( window.innerWidth, window.innerHeight );
 		renderer1.domElement.style.position = 'absolute';
 		renderer1.domElement.style.top = 0;
-		renderer1.domElement.style.zIndex = '1';
 		renderer1.domElement.style.pointerEvents = 'none'
+		renderer1.domElement.style.zIndex = '1';
 		
 		document.body.appendChild( renderer.domElement );
 		document.body.appendChild( renderer1.domElement );
@@ -293,7 +322,6 @@ $(document).ready(function() {
 			if ( onObject === true ) {
 
 				velocity.y = Math.max( 0, velocity.y );
-				canJump = true;
 
 			}
 
@@ -306,8 +334,6 @@ $(document).ready(function() {
 
 				velocity.y = 0;
 				controls.getObject().position.y = 10;
-
-				canJump = true;
 
 			}
 

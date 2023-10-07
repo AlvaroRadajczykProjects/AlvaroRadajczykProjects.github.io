@@ -285,7 +285,7 @@ function init() {
 
 	scene.add( new THREE.AmbientLight( 0x666666 ) );
 
-	light = new THREE.DirectionalLight( 0xdfebff, 1 );
+	/*light = new THREE.DirectionalLight( 0xdfebff, 1 );
 	light.position.set( 50, 200, 100 );
 	light.position.multiplyScalar( 1.3 );
 
@@ -303,6 +303,10 @@ function init() {
 
 	light.shadow.camera.far = 1000;
 
+	scene.add( light );*/
+	
+	light = new THREE.HemisphereLight( 0xeeeeff, 0x777788, 2.5 );
+	light.position.set( 0.5, 1, 0.75 );
 	scene.add( light );
 
 	renderer = new CSS3DRenderer();
