@@ -26,17 +26,57 @@
 				</div>
 				
 				<div id="body_content">
-					<p>En esta sección podrás encotrar todos los proyectos en los que he estado trabajando y tengo públicos en un repositorio de GitHub</p>
+					<p>En esta sección podrás encotrar todos los proyectos en los que he estado trabajando y tengo públicos en un repositorio de GitHub. Si no se muestran, Github Pages Tree habrá superado el máximo de consultas por hora que se pueden hacer y tendré que agregar las entradas manualmente...</p>
+					<br>
 				</div>
 				
 				<script type="module">
 					
+					var descripciones_proyectos = []
+					
+					function createEntry( filename, metadata ){
+						const object = document.createElement("div")
+						const object_title = document.createElement("p")
+						const object_description = document.createElement("p")
+						
+						const title = metadata.split(" -> ")[0]
+						const description = metadata.split(" -> ")[1]
+						
+						object_title.innerHTML = "<a href=\"proyectos/"+filename+"\">"+title+"</a>"
+						object_description.innerHTML = description + "<br><br>"
+						
+						object.appendChild(object_title)
+						object.appendChild(object_description)
+						
+						return object
+					}
+					
 					//función de iterador árbol
 					function myIterator(value, index, array) {
-						const file_name = value.path;
-						const object = document.createElement("p")
-						object.innerHTML = "<a href=\"proyectos/"+file_name+"\">Enlace "+file_name.split(".")[0]+"</a>"
-						document.getElementById("body_content").appendChild(object)
+						const filename = value.path;
+						const metadata = descripciones_proyectos[index]
+						document.getElementById("body_content").appendChild( createEntry( filename, metadata ) )
+					}
+					
+					function httpGet(theUrl) {
+						var xmlhttp;
+						if (window.XMLHttpRequest)
+						{// code for IE7+, Firefox, Chrome, Opera, Safari
+							xmlhttp=new XMLHttpRequest();
+						}
+						else
+						{// code for IE6, IE5
+							xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+						}
+						xmlhttp.onreadystatechange=function()
+						{
+							if (xmlhttp.readyState==4 && xmlhttp.status==200)
+							{
+								descripciones_proyectos = xmlhttp.responseText.match(/[^\r\n]+/g)
+							}
+						}
+						xmlhttp.open("GET", theUrl, false);
+						xmlhttp.send();    
 					}
 					
 					/*
@@ -63,9 +103,10 @@
 						return tree;
 					}
 					
-					const lista = await getFilesInProjectDirectory("resources/pages/proyectos")
+					httpGet("proyectos/descripciones.txt")
 					
-					lista.forEach(myIterator)
+					const lista = await getFilesInProjectDirectory("resources/pages/proyectos")
+					lista.forEach(myIterator)				
 					
 				</script>
 				
