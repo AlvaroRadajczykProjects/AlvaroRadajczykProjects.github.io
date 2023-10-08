@@ -27,16 +27,45 @@
 				
 				<div id="body_content">
 					<p>En esta sección podrás encotrar todos los proyectos en los que he estado trabajando y tengo públicos en un repositorio de GitHub</p>
+					<br>
 				</div>
 				
 				<script type="module">
+					
+					var descripciones_proyectos = []
 					
 					//función de iterador árbol
 					function myIterator(value, index, array) {
 						const file_name = value.path;
 						const object = document.createElement("p")
+						const object2 = document.createElement("p")
+						const descripcion = descripciones_proyectos[index]
+						
 						object.innerHTML = "<a href=\"proyectos/"+file_name+"\">Enlace "+file_name.split(".")[0]+"</a>"
+						object2.innerHTML = descripcion + "<br><br>"
 						document.getElementById("body_content").appendChild(object)
+						document.getElementById("body_content").appendChild(object2)
+					}
+					
+					function httpGet(theUrl) {
+						var xmlhttp;
+						if (window.XMLHttpRequest)
+						{// code for IE7+, Firefox, Chrome, Opera, Safari
+							xmlhttp=new XMLHttpRequest();
+						}
+						else
+						{// code for IE6, IE5
+							xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+						}
+						xmlhttp.onreadystatechange=function()
+						{
+							if (xmlhttp.readyState==4 && xmlhttp.status==200)
+							{
+								descripciones_proyectos = xmlhttp.responseText.match(/[^\r\n]+/g)
+							}
+						}
+						xmlhttp.open("GET", theUrl, false);
+						xmlhttp.send();    
 					}
 					
 					/*
@@ -63,9 +92,10 @@
 						return tree;
 					}
 					
-					const lista = await getFilesInProjectDirectory("resources/pages/proyectos")
+					httpGet("proyectos/descripciones.txt")
 					
-					lista.forEach(myIterator)
+					const lista = await getFilesInProjectDirectory("resources/pages/proyectos")
+					lista.forEach(myIterator)				
 					
 				</script>
 				
