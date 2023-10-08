@@ -27,6 +27,28 @@
 				
 				<div id="body_content">
 					<p>En esta sección podrás encotrar todos los proyectos en los que he estado trabajando y tengo públicos en un repositorio de GitHub. Si no se muestran, Github Pages Tree habrá superado el máximo de consultas por hora que se pueden hacer y tendré que agregar las entradas manualmente...</p>
+					<div id="lista_proyectos" class="row">
+						
+						<!--<div class="column">
+							<h2>Column 1</h2>
+							<p>Some text..</p>
+						</div>
+						<div class="column">
+							<h2>Column 2</h2>
+							<p>Some text..</p>
+						</div>
+						<div class="column">
+							<h2>Column 3</h2>
+							<p>Some text..</p>
+						</div>
+						<div class="column">
+							<h2>Column 4</h2>
+							<p>Some text..</p>
+						</div>-->
+						
+					</div>
+					<br>
+					<br>
 					<br>
 				</div>
 				
@@ -36,6 +58,7 @@
 					
 					function createEntry( filename, metadata ){
 						const object = document.createElement("div")
+						object.classList.add('column');
 						const object_title = document.createElement("p")
 						const object_description = document.createElement("p")
 						
@@ -103,10 +126,17 @@
 						return tree;
 					}
 					
+					/*
 					httpGet("proyectos/descripciones.txt")
 					
 					const lista = await getFilesInProjectDirectory("resources/pages/proyectos")
-					lista.forEach(myIterator)				
+					lista.forEach(myIterator)	
+					*/
+					
+					document.getElementById("lista_proyectos").appendChild( createEntry( "plain_proyecto_1.html", "Proyecto 1 -> Descripcion del proyecto 1" ) )
+					document.getElementById("lista_proyectos").appendChild( createEntry( "plain_proyecto_2.html", "Proyecto 2 -> Descripcion del proyecto 2" ) )
+					document.getElementById("lista_proyectos").appendChild( createEntry( "plain_proyecto_3.html", "Proyecto 3 -> Descripcion del proyecto 3" ) )
+					document.getElementById("lista_proyectos").appendChild( createEntry( "plain_proyecto_3.html", "Proyecto 4 -> Descripcion del proyecto 4" ) )
 					
 				</script>
 				
