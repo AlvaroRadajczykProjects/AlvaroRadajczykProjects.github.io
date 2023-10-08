@@ -61,6 +61,7 @@ h3 {
 	font-size: calc(30px + 1.8vw); 
 	font-family:'Tahoma'; 
 	user-select: none;
+	text-align: center;
 	color: rgb(0,186,253);
 }
 

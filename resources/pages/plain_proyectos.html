@@ -31,6 +31,9 @@
 					<br>
 					<br>
 					<br>
+					<br>
+					<br>
+					<br>
 					<!--<div class="container">
 					  <img src="../images/white_img.png" alt="Snow" style="width:100%;">
 					  <div class="bottom-left">Bottom Left</div>
@@ -42,6 +45,7 @@
 					var descripciones_proyectos = []
 					
 					function createEntry( filename, metadata ){
+
 						const imageUrl = filename.split(".")[0]+".png"
 					
 						const object = document.createElement("div")
@@ -81,15 +85,21 @@
 						
 						object_panel_title.appendChild(object_title)
 						object_panel_description.innerHTML = "<p class=\"truncate-overflow\">"+description+"</p>"
-						
+					
 						return object
+						
 					}
 					
 					//función de iterador árbol
 					function myIterator(value, index, array) {
 						const filename = value.path;
-						const metadata = descripciones_proyectos[index]
-						document.getElementById("body_content").appendChild( createEntry( filename, metadata ) )
+						if (filename != "descripciones.txt"){
+							const metadata = descripciones_proyectos[index-1]
+							console.log(metadata+"; "+(index-1))
+							if(metadata != undefined){
+								document.getElementById("lista_proyectos").appendChild( createEntry( filename, metadata ) )
+							}
+						}
 					}
 					
 					function httpGet(theUrl) {
@@ -137,17 +147,17 @@
 						return tree;
 					}
 					
-					/*
 					httpGet("proyectos/descripciones.txt")
 					
 					const lista = await getFilesInProjectDirectory("resources/pages/proyectos")
-					lista.forEach(myIterator)	
-					*/
+					lista.forEach(myIterator)
 					
+					/*
 					document.getElementById("lista_proyectos").appendChild( createEntry( "plain_proyecto_1.html", "Proyecto 1 -> Aplicación PC que permite crear y abrir documentos txt cuyo contenido se crifra con el algoritmo AES-256 CBC, sólo desbloqueable con una contraseña elegida" ) )
 					document.getElementById("lista_proyectos").appendChild( createEntry( "plain_proyecto_2.html", "Proyecto 2 -> Descripcion del proyecto 2" ) )
 					document.getElementById("lista_proyectos").appendChild( createEntry( "plain_proyecto_3.html", "Proyecto 3 -> Descripcion del proyecto 3" ) )
 					document.getElementById("lista_proyectos").appendChild( createEntry( "plain_proyecto_4.html", "Proyecto 4 -> Descripcion del proyecto 4" ) )
+					*/
 					
 				</script>
 				
