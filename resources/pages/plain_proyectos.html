@@ -27,29 +27,14 @@
 				
 				<div id="body_content">
 					<p>En esta sección podrás encotrar todos los proyectos en los que he estado trabajando y tengo públicos en un repositorio de GitHub. Si no se muestran, Github Pages Tree habrá superado el máximo de consultas por hora que se pueden hacer y tendré que agregar las entradas manualmente...</p>
-					<div id="lista_proyectos" class="row">
-						
-						<!--<div class="column">
-							<h2>Column 1</h2>
-							<p>Some text..</p>
-						</div>
-						<div class="column">
-							<h2>Column 2</h2>
-							<p>Some text..</p>
-						</div>
-						<div class="column">
-							<h2>Column 3</h2>
-							<p>Some text..</p>
-						</div>
-						<div class="column">
-							<h2>Column 4</h2>
-							<p>Some text..</p>
-						</div>-->
-						
-					</div>
+					<div id="lista_proyectos" class="row"></div>
 					<br>
 					<br>
 					<br>
+					<!--<div class="container">
+					  <img src="../images/white_img.png" alt="Snow" style="width:100%;">
+					  <div class="bottom-left">Bottom Left</div>
+					</div>-->
 				</div>
 				
 				<script type="module">
@@ -57,19 +42,45 @@
 					var descripciones_proyectos = []
 					
 					function createEntry( filename, metadata ){
+						const imageUrl = filename.split(".")[0]+".png"
+					
 						const object = document.createElement("div")
 						object.classList.add('column');
+						
+						const object_container = document.createElement("div")
+						
 						const object_title = document.createElement("p")
-						const object_description = document.createElement("p")
+						const object_image = document.createElement("img")
+						
+						const object_panel = document.createElement("div")
+						object_panel.classList.add('bottom-left');
+						
+						const object_panel_title = document.createElement("div")
+						object_panel_title.classList.add('bottom-left-title');
+						
+						const object_panel_description = document.createElement("div")
+						object_panel_description.classList.add('bottom-left-description');
 						
 						const title = metadata.split(" -> ")[0]
 						const description = metadata.split(" -> ")[1]
 						
-						object_title.innerHTML = "<a href=\"proyectos/"+filename+"\">"+title+"</a>"
-						object_description.innerHTML = description + "<br><br>"
+						object_container.style = "position: relative"
 						
-						object.appendChild(object_title)
-						object.appendChild(object_description)
+						//proyectos/"+filename
+						object_title.innerHTML = "<h3><a href=\"proyectos/"+filename+"\">"+title+"</a><h3>"
+						
+						object_image.src = "../images/proyectos/"+imageUrl
+						object_image.style = "width: 100%;"
+						
+						object.appendChild(object_container)
+						object_container.appendChild(object_image)
+						object_container.appendChild(object_panel)
+						
+						object_panel.appendChild(object_panel_title)
+						object_panel.appendChild(object_panel_description)
+						
+						object_panel_title.appendChild(object_title)
+						object_panel_description.innerHTML = "<p class=\"truncate-overflow\">"+description+"</p>"
 						
 						return object
 					}
@@ -133,10 +144,10 @@
 					lista.forEach(myIterator)	
 					*/
 					
-					document.getElementById("lista_proyectos").appendChild( createEntry( "plain_proyecto_1.html", "Proyecto 1 -> Descripcion del proyecto 1" ) )
+					document.getElementById("lista_proyectos").appendChild( createEntry( "plain_proyecto_1.html", "Proyecto 1 -> Aplicación PC que permite crear y abrir documentos txt cuyo contenido se crifra con el algoritmo AES-256 CBC, sólo desbloqueable con una contraseña elegida" ) )
 					document.getElementById("lista_proyectos").appendChild( createEntry( "plain_proyecto_2.html", "Proyecto 2 -> Descripcion del proyecto 2" ) )
 					document.getElementById("lista_proyectos").appendChild( createEntry( "plain_proyecto_3.html", "Proyecto 3 -> Descripcion del proyecto 3" ) )
-					document.getElementById("lista_proyectos").appendChild( createEntry( "plain_proyecto_3.html", "Proyecto 4 -> Descripcion del proyecto 4" ) )
+					document.getElementById("lista_proyectos").appendChild( createEntry( "plain_proyecto_4.html", "Proyecto 4 -> Descripcion del proyecto 4" ) )
 					
 				</script>
 				
