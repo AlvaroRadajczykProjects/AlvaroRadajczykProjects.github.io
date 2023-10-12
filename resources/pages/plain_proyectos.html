@@ -27,6 +27,7 @@
 				
 				<div id="body_content">
 					<p>En esta sección podrás encotrar todos los proyectos en los que he estado trabajando y tengo públicos en un repositorio de GitHub. Si no se muestran, Github Pages Tree habrá superado el máximo de consultas por hora que se pueden hacer y tendré que agregar las entradas manualmente...</p>
+					<p id="texto_carga">Cargando proyectos...</p>
 					<div id="lista_proyectos" class="row"></div>
 					<br>
 					<br>
@@ -46,7 +47,7 @@
 					
 					function createEntry( filename, metadata ){
 
-						const imageUrl = filename.split(".")[0]+".png"
+						const imageUrl = filename.split(".")[0]+".jpg"
 					
 						const object = document.createElement("div")
 						object.classList.add('column');
@@ -151,6 +152,7 @@
 					
 					const lista = await getFilesInProjectDirectory("resources/pages/proyectos")
 					lista.forEach(myIterator)
+					document.getElementById("texto_carga").innerHTML = ""
 					
 					/*
 					document.getElementById("lista_proyectos").appendChild( createEntry( "plain_proyecto_1.html", "Proyecto 1 -> Aplicación PC que permite crear y abrir documentos txt cuyo contenido se crifra con el algoritmo AES-256 CBC, sólo desbloqueable con una contraseña elegida" ) )

@@ -3,5 +3,5 @@ body {
 }
 
 #first_image_container {
-	background-image: linear-gradient(0deg, black, 50%, transparent), url("../../images/proyectos/plain_proyecto_2.png");
+	background-image: linear-gradient(0deg, black, 50%, transparent), url("../../images/proyectos/plain_proyecto_2.jpg");
 }
